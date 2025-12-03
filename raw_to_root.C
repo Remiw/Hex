@@ -20,6 +20,19 @@
 
 #include "WaveFormFunctions.C" //details of the record and values to obtain
 
+// Pulse class holds the extracted parameters for a single waveform event.
+// Members:
+//   adqTime        - Acquisition time of the pulse
+//   fBase          - Baseline value
+//   fMaxBin        - Bin position of the maximum value
+//   fMax           - Maximum value of the pulse
+//   fInt           - Integral of the pulse
+//   fRCharge       - Relative charge
+//   fFrontTime_50  - Time at 50% of the leading edge
+//   fTailTime_50   - Time at 50% of the trailing edge
+//   fT0            - Time zero (threshold crossing)
+//   fT0_lf         - Low-frequency time zero
+
 class Pulse : public TObject {
 public:
   float adqTime;
@@ -43,7 +56,7 @@ void raw_to_root(){
    gROOT->Reset();
 
   DigRecord fWaveForm, fWaveFormBL, fWaveFormInv; 
-  DigRecordg *pfWaveForm, *pfWaveFormBL, *pfWaveFormInv;
+  DigRecord *pfWaveForm, *pfWaveFormBL, *pfWaveFormInv;
 
   pfWaveForm    = &fWaveForm;
   pfWaveFormBL  = &fWaveFormBL;
@@ -117,8 +130,9 @@ void raw_to_root(){
 
     //abrir archivo csv
     ifstream in;
-    in.open("data10.csv");
-    
+    const char *filename = "data12.csv";
+    in.open(filename);
+     
     if (!in.is_open()) {
         cerr << "Error, no se puede leer el archivo" << endl;
         return;
@@ -288,8 +302,8 @@ void raw_to_root(){
     c2->cd(i);
     h_Pers[i-1]->Draw("colz");
   }
-  
-  TString OutFileName = Form("DigOut10.root");
+
+  TString OutFileName = Form("%s.root", filename);
   TFile*  file = new TFile(OutFileName,"recreate");
   tTree.Write();
   for(int i=1; i<noCh+1;i++){

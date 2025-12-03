@@ -50,21 +50,24 @@ public:
 };
 
 void accessTreeInfo2(){
-  TFile* file = new TFile("DigOut11.root");
+  TFile* file = new TFile("data11.csv.root");
   TChain *tree = new TChain("tree");
   // Open the ROOT file
-  tree->Add("DigOut.root");
-  tree->Add("DigOut1.root");
-  tree->Add("DigOut2.root");
-  tree->Add("DigOut3.root");
-  tree->Add("DigOut4.root");
-  tree->Add("DigOut5.root");
-  tree->Add("DigOut6.root");
-  tree->Add("DigOut7.root");
-  tree->Add("DigOut8.root");
-  tree->Add("DigOut9.root");
-  tree->Add("DigOut10.root");
-  tree->Add("DigOut11.root");
+  tree->Add("data1.csv.root");
+  tree->Add("data2.csv.root");
+  tree->Add("data3.csv.root");
+  tree->Add("data4.csv.root");
+  tree->Add("data5.csv.root");
+  tree->Add("data6.csv.root");
+  tree->Add("data7.csv.root");
+  tree->Add("data8.csv.root");
+  tree->Add("data9.csv.root");
+  tree->Add("data10.csv.root");
+  tree->Add("data11.csv.root");
+  tree->Add("data12.csv.root");
+
+
+
   //tree variables
   int run, event; 
   Pulse *B0 = new Pulse();   
@@ -119,14 +122,14 @@ void accessTreeInfo2(){
 
   //histogramas para las distribuciones de diferencia de tiempos de arribo (fT0)
   
-  //auto hTA0 = new TH1F("hTA0","arrTime ch 13-9(2a-1a); Time, ns; Entries",100,-10,10); //2a-1a
   //auto hTA1 = new TH1F("hTA1","arrTime ch 14-10(2b-1b); Time, ns; Entries",100,-10,10); //2b-1b
 
-  auto hTA0 = new TH1F("hTA0","  (13+14+15)-(9+10+11); Time, ns; Entries",100,-10,10); //2a-1a
-  auto hTA1 = new TH1F("hTA1","(6+7)-(4+5); Time, ns; Entries",100,-1,1); //2b-1b
-  auto hTA2 = new TH1F("hTA2","arrTime ch 15-11(2c-1c); Time, ns; Entries",100,-10,10); //2c-1c
-  auto hTA3 = new TH1F("hTA3","arrTime ch 6-7(2b-2a); Time, ns; Entries",100,-10,10); //2b-2a
-  auto hTA4 = new TH1F("hTA4","arrTime ch 4-5(0b-0a); Time, ns; Entries",100,-10,10); //0b-0a
+  auto hTA0 = new TH1F("hTA0"," 2a-1a; Time, ns; Entries",50,-12,12); 
+  auto hTA1 = new TH1F("hTA1"," 2b-1b; Time, ns; Entries",50,-12,12); 
+  auto hTA2 = new TH1F("hTA2"," 2c-1c; Time, ns; Entries",50,-12,12); 
+  auto hTA3 = new TH1F("hTA3"," 2b-2a; Time, ns; Entries",50,-12,12); 
+  auto hTA4 = new TH1F("hTA4"," 0b-0a; Time, ns; Entries",50,-12,12);
+  auto hTA5 = new TH1F("hTA0"," 2(a+b+c) - 1(a+b+c) ; Time, ns; Entries",50,-20,20); 
 
 
   //llenado de los histogramas de persistencia con histogramas recuperados del archivo root
@@ -190,7 +193,7 @@ void accessTreeInfo2(){
     if(B7->fT0>-10000.) adqComplete[7] = true;
     if(B8->fT0>-10000.) adqComplete[8] = true;
     if(B9->fT0>-10000.) adqComplete[9] = true;
-
+      
     double_t arrTCh0=0., arrTCh1=0., arrTCh2=0., arrTCh3=0., arrTCh4=0., arrTCh5=0., arrTCh6=0., arrTCh7=0., arrTCh9=0., arrTCh10=0., arrTCh11=0., arrTCh13=0., arrTCh14=0., arrTCh15=0;
     if(adqComplete[0]) {arrTCh4= B0->fT0;}
     if(adqComplete[1]) {arrTCh5= B1->fT0;}
@@ -203,48 +206,54 @@ void accessTreeInfo2(){
     if(adqComplete[8]) {arrTCh14= B8->fT0;}
     if(adqComplete[9]) {arrTCh15= B9->fT0;}
 
-    double_t C2 = 0., C1 = 0., C3 = 0., C4 = 0.;
-    if(adqComplete[7] ) {
-      C2 = (arrTCh13 + arrTCh14 + arrTCh15);
-      C1 = (arrTCh9 + arrTCh10 + arrTCh11);
-      hTA0->Fill(C2-C1);
+    double_t C0=0., C1=0., C2 = 0., C3 = 0., C4 = 0.;
+    if((B4-> fMax > 100 || B5-> fMax > 100. || B6-> fMax > 100.) && (B7-> fMax > 100. || B8-> fMax > 100. || B9-> fMax > 100.)) {
+       C2 = (arrTCh13 + arrTCh14 + arrTCh15);
+       C1 = (arrTCh9 + arrTCh10 + arrTCh11);
+       hTA5->Fill(C2-C1);
+    }   
+    // if(adqComplete[6] ) {
+    //   C3 = (arrTCh6);
+    //   C4 = (arrTCh4);
+    //   hTA1->Fill(C3-C4);
+    // }
+    
+    // A CONTINUACIÓN PARA LA RESTA ENTRE HODOSCOPIOS EN LINEA
+    if(B7-> fMax > 100. && B4-> fMax > 100.) { 
+     C0 = (arrTCh13 - arrTCh9);  //diferencia de tiempo ch 13-9(2a-1a) en coincidencia
+     hTA0->Fill(C0);
     }
-    if(adqComplete[6] ) {
-      C3 = (arrTCh6);
-      C4 = (arrTCh4);
-      hTA1->Fill(C3-C4);
+    if(B8-> fMax > 100. && B5-> fMax > 100.) {
+     C1 = (arrTCh14 - arrTCh10);   //diferencia de tiempo ch 14-10(2b-1b) en coincidencia
+      hTA1->Fill(C1);
     }
-    //if(adqComplete[7] && adqComplete[4]) { 
-    //  fT0diff0 = (B7->fT0 - B4->fT0);  //diferencia de tiempo ch 13-9(2a-1a)
-    //  hTA0->Fill(fT0diff0);
-    //}
-    //if(adqComplete[8] && adqComplete[5]) {
-    //  fT0diff1 = (B8->fT0 - B5->fT0);   //diferencia de tiempo ch 14-10(2b-1b)
-    //   hTA1->Fill(fT0diff1);
-    //}
-    //if(adqComplete[9] && adqComplete[6]) {
-    //  fT0diff2 = (B9->fT0 - B6->fT0);  //diferencia de tiempo ch 15-11(2c-1c)
-    //  hTA2->Fill(fT0diff2);
-    //}
-    //if(adqComplete[2] && adqComplete[3]) {
-    //  fT0diff3 = (B2->fT0 - B3->fT0);  //diferencia de tiempo ch 6-7(2b-2a)
-    //  hTA3->Fill(fT0diff3);
-    //}
-    //if(adqComplete[0] && adqComplete[1]) {
-    //  fT0diff4 = (B0->fT0 - B1->fT0);  //diferencia de tiempo ch 4-5(0b-0a)
-    //  hTA4->Fill(fT0diff4);
-    //}
+    if(B9-> fMax > 100. && B6-> fMax > 100.) {
+     C2 = (arrTCh15 - arrTCh11);  //diferencia de tiempo ch 15-11(2c-1c) en coincidencia
+     hTA2->Fill(C2);
+    }
+    if(B2-> fMax > 100. && B3-> fMax > 100.) {
+     C3 = (arrTCh6 - arrTCh7);  //diferencia de tiempo ch 6-7(2b-2a) en coincidencia
+     hTA3->Fill(C3);
+    }
+    if(B0-> fMax > 100. && B1-> fMax > 100.) {
+     C4 = (arrTCh5 - arrTCh4);  //diferencia de tiempo ch 4-5(0b-0a) en coincidencia
+     hTA4->Fill(C4);
+    }
   }
-  //B4);  ch9
-  //B5);  ch10
-  //B6);  ch11
-  //B7);  ch13
-  //B8);  ch14
-  //B9);  ch15
+  //B0);  ch4 - 0b(1)
+  //B1);  ch5 - 0a(2)
+  //B2);  ch6 - 2b(3)
+  //B3);  ch7 - 2a(4)
+  //B4);  ch9 - 1a
+  //B5);  ch10 - 1b
+  //B6);  ch11 - 1c
+  //B7);  ch13 - 2a
+  //B8);  ch14 - 2b
+  //B9);  ch15 - 2c
 
   //display arrival time difference distribution (resolution time = sigma/sqrt(2))
   auto c1 = new TCanvas();
-  c1->Divide(2,1);
+  c1->Divide(2,3);
 
   c1->cd(1);
   hTA0->Fit("gaus");
@@ -252,15 +261,19 @@ void accessTreeInfo2(){
   c1->cd(2);
   hTA1->Fit("gaus");
   hTA1->Draw();
-  //c1->cd(3);
-  //hTA2->Fit("gaus");
-  //hTA2->Draw();
-  //c1->cd(4);
-  //hTA3->Fit("gaus");
-  //hTA3->Draw();
-  //c1->cd(5);
-  //hTA4->Fit("gaus");
-  //hTA4->Draw();
+  c1->cd(3);
+  hTA2->Fit("gaus");
+  hTA2->Draw();
+  c1->cd(4);
+  hTA3->Fit("gaus");
+  hTA3->Draw();
+  c1->cd(5);
+  hTA4->Fit("gaus");
+  hTA4->Draw();
+  c1->cd(6);
+  hTA5->Fit("gaus");
+  hTA5->Draw();
+  
   
   c1->Draw();  
 
@@ -326,17 +339,26 @@ void accessTreeInfo2(){
 
   //display persistence histograms
 
-  h_Per0->GetXaxis()->SetRangeUser(3800, 6500);
-  h_Per1->GetXaxis()->SetRangeUser(3800, 6500);
-  h_Per2->GetXaxis()->SetRangeUser(3800, 6500);
-  h_Per3->GetXaxis()->SetRangeUser(3800, 6500);
-  h_Per4->GetXaxis()->SetRangeUser(3800, 6500);
-  h_Per5->GetXaxis()->SetRangeUser(3800, 6500);
-  h_Per6->GetXaxis()->SetRangeUser(3800, 6500);
-  h_Per7->GetXaxis()->SetRangeUser(3800, 6500);
-  h_Per8->GetXaxis()->SetRangeUser(3800, 6500);
-  h_Per9->GetXaxis()->SetRangeUser(3800, 6500);
-
+  h_Per0->GetXaxis()->SetRangeUser(150, 300);
+  h_Per0->GetYaxis()->SetRangeUser(6000,8500);
+  h_Per1->GetXaxis()->SetRangeUser(150, 300);
+  h_Per1->GetYaxis()->SetRangeUser(6000,8500);
+  h_Per2->GetXaxis()->SetRangeUser(150, 300);
+  h_Per2->GetYaxis()->SetRangeUser(6000,8500);
+  h_Per3->GetXaxis()->SetRangeUser(150, 300);
+  h_Per3->GetYaxis()->SetRangeUser(6000,8500);
+  h_Per4->GetXaxis()->SetRangeUser(150, 300);
+  h_Per4->GetYaxis()->SetRangeUser(6000,8500);
+  h_Per5->GetXaxis()->SetRangeUser(150, 300);
+  h_Per5->GetYaxis()->SetRangeUser(6000,8500);
+  h_Per6->GetXaxis()->SetRangeUser(150, 300);
+  h_Per6->GetYaxis()->SetRangeUser(6000,8500);
+  h_Per7->GetXaxis()->SetRangeUser(150, 300);
+  h_Per7->GetYaxis()->SetRangeUser(6000,8500);
+  h_Per8->GetXaxis()->SetRangeUser(150, 300);
+  h_Per8->GetYaxis()->SetRangeUser(6000,8500);
+  h_Per9->GetXaxis()->SetRangeUser(150, 300);
+  h_Per9->GetYaxis()->SetRangeUser(6000,8500);
 
   auto c2 = new TCanvas("c2", "Persistence", 1200, 800);
   c2->Divide(2, noCh / 2);
